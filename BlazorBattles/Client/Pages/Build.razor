@@ -1,0 +1,31 @@
+﻿@page "/build"
+@inject IBananaService BananaService
+@inject IUnitService UnitService
+
+<h3>Build</h3>
+
+<div class="form-group">
+    <select @bind="selectedUnitId" class="form-control">
+        @foreach ( var unit in UnitService.Units)
+        {
+            <option value="@unit.Id">@unit.Title | @unit.BananaConst Bananas</option>
+        }
+    </select>
+</div>
+
+
+
+<button class="btn btn-secondary" @onclick="BuildUnit">
+    Build
+</button>
+
+@code {
+    int selectedUnitId = 1;
+
+    public void BuildUnit()
+    {
+        var selectedUnit = UnitService.Units.FirstOrDefault(unit => unit.Id == selectedUnitId);
+        BananaService.EatBananas(selectedUnit.BananaConst);
+        UnitService.AddUnit(selectedUnitId);
+    }
+}
