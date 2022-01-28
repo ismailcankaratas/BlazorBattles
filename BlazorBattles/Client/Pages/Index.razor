@@ -1,3 +1,12 @@
 ﻿@page "/"
 
-<h1>Blazor Battles'a hoş geldiniz!</h1>
+<AuthorizeView>
+    <Authorized>
+        <h1>Merhaba, @context.User.Identity.Name. Tekrar hoşgeldin!</h1>
+        Hadi başlayalım <a href="/army">ordun</a>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Blazor Battles'a hoş geldiniz!</h1>
+       <Login />
+    </NotAuthorized>
+</AuthorizeView>

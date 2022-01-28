@@ -1,6 +1,7 @@
-﻿@page "/login"
+﻿@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<h3>Login</h3>
+<h3>Lütfen aşağıdan giriş yapın veya yeni bir hesap için <a href="/register">kaydolun</a></h3>
 
 <EditForm Model="user" OnValidSubmit="HandleLogin">
     <DataAnnotationsValidator></DataAnnotationsValidator>
@@ -15,10 +16,13 @@
 </EditForm>
 
 @code {
+    bool isAuthenticated = false;
     private UserLogin user = new UserLogin();
 
-    private void HandleLogin()
+    private async void HandleLogin()
     {
-        Console.WriteLine($"{user.Username} - {user.Password}");
+        await LocalStorage.SetItemAsync<bool>("isAuthenticated", true);
+        await AuthenticationStateProvider.GetAuthenticationStateAsync();
     }
+
 }
