@@ -64,7 +64,7 @@
 
     private async void Logout()
     {
-        await LocaleStrage.RemoveItemAsync("isAuthenticated");
+        await LocaleStrage.RemoveItemAsync("authToken");
         await AuthenticationStateProvider.GetAuthenticationStateAsync();
         NavigationManager.NavigateTo("/");
     }

@@ -1,13 +1,15 @@
 ﻿@inject ILocalStorageService LocalStorage
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAuthService AuthService
+@inject IToastService ToastService
 
 <h3>Lütfen aşağıdan giriş yapın veya yeni bir hesap için <a href="/register">kaydolun</a></h3>
 
 <EditForm Model="user" OnValidSubmit="HandleLogin">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <div class="form-group">
-        <label id="username">Kullanıcıadı</label>
-        <InputText id="username" @bind-Value="user.Username" class="form-control"></InputText>
+        <label id="email">Email</label>
+        <InputText id="email" @bind-Value="user.Email" class="form-control"></InputText>
         <label id="password">Şifre</label>
         <InputText id="password" @bind-Value="user.Password" class="form-control" type="password"></InputText>
     </div>
@@ -16,13 +18,20 @@
 </EditForm>
 
 @code {
-    bool isAuthenticated = false;
     private UserLogin user = new UserLogin();
 
     private async void HandleLogin()
     {
-        await LocalStorage.SetItemAsync<bool>("isAuthenticated", true);
-        await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var result = await AuthService.Login(user);
+        if(result.Success)
+        {
+            await LocalStorage.SetItemAsync<string>("authToken", result.Data);
+            await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        }
+        else
+        {
+            ToastService.ShowError(result.Message);
+        }
     }
 
 }

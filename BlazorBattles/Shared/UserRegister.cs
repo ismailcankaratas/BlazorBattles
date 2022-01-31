@@ -13,6 +13,7 @@ namespace BlazorBattles.Shared
         public string Email { get; set; }
         [Required(ErrorMessage = "Kullanıcıadı giriniz."), StringLength(16, ErrorMessage = "Kullanıcı adınız çok uzun (en fazla 16 karakter).")]
         public string Username { get; set; }
+        [Required(ErrorMessage = "Bio alanını zorunludur.")]
         public string Bio { get; set; }
         [Required(ErrorMessage = "Şifre giriniz."), StringLength(100, MinimumLength = 6, ErrorMessage = "Parola alanı, minimum uzunluğu 6 ve maksimum uzunluğu 100 olan bir dize olmalıdır.")]
         public string Password { get; set; }
