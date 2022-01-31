@@ -9,9 +9,9 @@ namespace BlazorBattles.Shared
 {
     public class UserLogin
     {
-        [Required(ErrorMessage = "Kullanıcıadı giriniz.")]
-        public string Username { get; set; }
-        [Required(ErrorMessage = "Şifre giriniz.")]
+        [Required(ErrorMessage = "Email giriniz.")]
+        public string Email { get; set; }
+        [Required]
         public string Password { get; set; }
     }
 }
