@@ -2,46 +2,70 @@
 @inject IUnitService UnitService
 @attribute [Authorize]
 
-<h3> My Army </h3>
+<h3> Ordum </h3>
 
-@if(UnitService.Units.Count != 0)
+@if (UnitService.Units.Count != 0)
 {
-<table class="table">
-    @foreach (var userUnit in UnitService.MyUnits)
-   {
-       <tr>
-           <td>
-                @switch (userUnit.UnitId)
-                {
-                    case 1:
-                        <img src="icons/knight.png" />
-                    break;
-                    case 2:
-                        <img src="icons/archer.png" />
-                    break;
-                    case 3:
-                        <img src="icons/mage.png" />
-                    break;
-                }
-            </td>
-            <td>
-                @UnitService.Units.First(unit => unit.Id == userUnit.UnitId).Title
-            </td>
-            <td>
-                @userUnit.HitPoints HP
-            </td>
-       </tr>
-   }
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col"></th>
+                <th scope="col">Asker</th>
+                <th scope="col">Can</th>
+            </tr>
+        </thead>
+
+        @foreach (var (userUnit, index) in UnitService.MyUnits.Select((value, index) => (value, index))) 
+        {
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        @index
+                    </th>
+                    <td>
+                        @switch (userUnit.UnitId)
+                        {
+                            case 1:
+                                <img src="icons/knight.png" />
+                            break;
+                            case 3:
+                                <img src="icons/archer.png" />
+                            break;
+                            case 5:
+                                <img src="icons/mage.png" />
+                                break;
+                            case 6:
+                                <img src="icons/axe.png" />
+                            break;
+                        }
+                    </td>
+                    <td>
+                        @UnitService.Units.First(unit => unit.Id == userUnit.UnitId).Title
+                    </td>
+                    <td>
+                        @userUnit.HitPoints HP
+                    </td>
+                </tr>
+            </tbody>
+        }
     </table>
+    <center>
+        <button class="btn btn-warning" @onclick="ReviveArmy">Ordunu canlandır</button>
+    </center>
 }
 else
 {
-    <span>Birimler yükleniyor...</span>    
+    <span>Birimler yükleniyor...</span>
 }
 @code {
     protected override async Task OnInitializedAsync()
     {
-        await UnitService.LoadUnitAsync();    
+        await UnitService.LoadUnitAsync();
+        await UnitService.LoadUserUnitsAsync();
     }
-
+    private async Task ReviveArmy()
+    {
+        await UnitService.ReviveArmy();
+    }
 }

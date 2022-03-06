@@ -39,7 +39,7 @@ namespace BlazorBattles.Server.Data
             return response;
         }
 
-        public async Task<ServiceResponse<int>> Register(User user, string password)
+        public async Task<ServiceResponse<int>> Register(User user, string password, int startUnitId)
         {
             if (await UserExists(user.Email))
             {
@@ -53,7 +53,21 @@ namespace BlazorBattles.Server.Data
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            await AddStartUnit(user, startUnitId);
+
             return new ServiceResponse<int> { Data = user.Id, Success = true, Message = "Kayıt başarılı." };
+        }
+
+        private async Task AddStartUnit(User user, int startUnitId)
+        {
+            var unit = await _context.Units.FirstOrDefaultAsync<Unit>(u => u.Id == startUnitId);
+            _context.UserUnits.Add(new UserUnit
+            {
+                UnitId = unit.Id,
+                UserId = user.Id,
+                HitPoints = unit.HitPoints
+            });
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> UserExists(string email)

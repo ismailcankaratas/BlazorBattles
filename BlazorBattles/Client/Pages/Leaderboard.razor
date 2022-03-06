@@ -1,0 +1,99 @@
+﻿@page "/Leaderboard"
+@inject ILeaderboardService LeaderboardSevice
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IBattleService BattleService
+@inject IBananaService BananaService
+@inject IToastService ToastService
+@inject NavigationManager NavigationManager
+<h3>Liderler Sıralaması</h3>
+
+@if (LeaderboardSevice.Leaderboard == null)
+{
+    <span>Liderler sıralaması yükleniyor.. </span>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Kullanıcı</th>
+                <th>Zaferler</th>
+                <th>Yenilgiler</th>
+                <th>Savaşlar</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entry in LeaderboardSevice.Leaderboard)
+            {
+                <tr style="@GetMyStyle(@entry.UserId)">
+                    <td>
+                        @if (entry.Rank == 1)
+                        {
+                            <img src="icons/lider.png" width="25px" height="25px" />
+                        }
+                        else
+                        {
+                            @entry.Rank
+                        }
+                    </td>
+                    <td>@entry.Username</td>
+                    <td>@entry.Victories</td>
+                    <td>@entry.Defeats</td>
+                    <td>@entry.Battles</td>
+                    <td>
+                        @if (entry.UserId != myUserId)
+                        {
+                            <button class="btn btn-primary" @onclick="(() => StartBattle(entry.UserId))">
+                                Savaş
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    int myUserId;
+    protected override async Task OnInitializedAsync()
+    {
+        await LeaderboardSevice.GetLeaderboard();
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        myUserId = int.Parse(authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+    }
+    public string GetMyStyle(int userId)
+    {
+        if (userId == myUserId)
+            return "background-color: #5027d5; color: white; font-weight: bold;";
+        else
+            return string.Empty;
+    }
+    public async Task StartBattle(int opponentId)
+    {
+        Console.WriteLine($"{opponentId} ile savaş başladı.");
+        var result = await BattleService.StartBattle(opponentId);
+        if (result.RoundsFought <= 0)
+        {
+            ToastService.ShowInfo("Savaş gerçekleşmedi!");
+        }
+        else if (result.IsVictory)
+        {
+            ToastService.ShowSuccess("Savaşı kazandın!");
+        }
+        else
+        {
+            ToastService.ShowWarning("Savaşı kaybettin!");
+        }
+        await LeaderboardSevice.GetLeaderboard();
+        await BananaService.GetBananas();
+
+        if(result.RoundsFought > 0)
+        {
+            NavigationManager.NavigateTo("Battlelog");
+        }
+    }
+}
