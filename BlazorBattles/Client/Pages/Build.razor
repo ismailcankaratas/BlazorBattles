@@ -37,18 +37,8 @@
         await UnitService.LoadUnitAsync();
     }
 
-    public void BuildUnit()
+    public async Task BuildUnit()
     {
-        var selectedUnit = UnitService.Units.FirstOrDefault(unit => unit.Id == selectedUnitId);
-
-        if(BananaService.Bananas < selectedUnit.BananaConst)
-        {
-            needMoreBananas = true;
-            ToastService.ShowError("Yeterli muz yok!", ":(");
-            return;
-        }
-
-        BananaService.EatBananas(selectedUnit.BananaConst);
-        UnitService.AddUnit(selectedUnitId);
+        await UnitService.AddUnit(selectedUnitId);
     }
 }
