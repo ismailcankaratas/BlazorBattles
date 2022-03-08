@@ -1,3 +1,3 @@
 # BlazorBattles
 
-.NET 6 BLAZOR
+Blazor ile hazırlanmış savaş oyunu
