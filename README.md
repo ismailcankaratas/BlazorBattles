@@ -1,3 +1,4 @@
 # BlazorBattles
 
-Blazor ile hazırlanmış savaş oyunu
+### Blazor ile hazırlanmış savaş oyunu
+
